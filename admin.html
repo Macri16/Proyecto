@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>marketcorp.org — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0c12;--surface:#111420;--surface2:#171b28;--border:rgba(255,255,255,.07);--text:#f0f2ff;--muted:#9ca3af;--blue:#3b5bff;--radius:14px;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:26px}
+    header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+    h1{font-family:"Syne",sans-serif;font-size:28px}
+    .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--blue);border-color:transparent}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+    .card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+    .kpi{font-size:28px;font-family:"Syne",sans-serif}
+    .label{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th{color:var(--muted);font-size:12px;text-align:left;font-weight:600}
+    td{background:rgba(255,255,255,.02);border:1px solid var(--border);padding:10px 12px}
+    td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+    td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+    #loading{color:var(--muted)}
+    #error{display:none;margin-top:10px;border:1px solid rgba(244,63,94,.35);background:rgba(244,63,94,.08);border-radius:12px;padding:10px 12px}
+    @media (max-width: 840px){.grid{grid-template-columns:1fr}}
+    a{color:#b9c3ff}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Admin</h1>
+      <div class="label">marketcorp.org</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn" href="./client.html">Volver al dashboard</a>
+      <button class="btn primary" id="btnLogout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div id="loading">Cargando métricas…</div>
+  <div id="error"></div>
+
+  <div id="page" style="display:none">
+    <section class="grid">
+      <div class="card">
+        <div class="kpi" id="usersCount">—</div>
+        <div class="label">Usuarios</div>
+      </div>
+      <div class="card">
+        <div class="kpi" id="paymentsCount">—</div>
+        <div class="label">Pagos</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="label" style="margin-bottom:10px">Últimos pagos</div>
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Email</th><th>Monto (cents)</th><th>Moneda</th></tr>
+        </thead>
+        <tbody id="latestPayments"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="./assets/config.js"></script>
+  <script src="./assets/supabase-client.js"></script>
+  <script src="./assets/app.js"></script>
+  <script>window.__initAdminPage();</script>
+</body>
+</html>
+
