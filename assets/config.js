@@ -3,9 +3,9 @@
 // If you commit this file, it will expose your anon key (which is OK) but DO NOT put service role keys here.
 
 window.__APP_CONFIG__ = {
-  SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY",
-  API_BASE_URL: "https://YOUR_BACKEND.example.com",
+  SUPABASE_URL: "https://msgreflsxyroqecdtuqz.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_qTqD1k-tuwen7kSLSHgiZg_GXkf2v3n",
+  API_BASE_URL: "https://msgreflsxyroqecdtuqz.supabase.co",
   STRIPE_MIN_AMOUNT_CENTS: 500,
   STRIPE_CURRENCY: "usd"
 };
