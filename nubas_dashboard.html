@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nubas — Área de Clientes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c12;
+    --surface: #111420;
+    --surface2: #171b28;
+    --border: rgba(255,255,255,0.07);
+    --blue: #3b5bff;
+    --blue-light: #6b83ff;
+    --blue-glow: rgba(59,91,255,0.25);
+    --text: #f0f2ff;
+    --text-muted: #6b7280;
+    --text-dim: #9ca3af;
+    --green: #22d3a0;
+    --amber: #f59e0b;
+    --red: #f43f5e;
+    --radius: 14px;
+    --sidebar: 240px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    padding: 28px 0 20px;
+    transition: transform .3s;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 22px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 9px;
+    display: grid; place-items: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 800;
+    color: #fff;
+    box-shadow: 0 0 20px var(--blue-glow);
+  }
+  .logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; }
+
+  nav { flex: 1; padding: 18px 12px; display: flex; flex-direction: column; gap: 2px; }
+
+  .nav-section {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 14px 10px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    position: relative;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active {
+    background: rgba(59,91,255,0.15);
+    color: var(--blue-light);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 60%;
+    background: var(--blue);
+    border-radius: 0 3px 3px 0;
+  }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .badge {
+    margin-left: auto;
+    background: var(--blue);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .sidebar-user {
+    margin: 12px;
+    padding: 14px;
+    background: var(--surface2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background .18s;
+  }
+  .sidebar-user:hover { background: #1e2336; }
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), #7c3aed);
+    display: grid; place-items: center;
+    font-weight: 600; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--text-muted); }
+  .user-chevron { margin-left: auto; color: var(--text-muted); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: 64px;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(10,12,18,0.8);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: background .18s, border-color .18s;
+    position: relative;
+  }
+  .icon-btn:hover { background: var(--surface2); border-color: rgba(255,255,255,0.12); }
+  .icon-btn svg { width: 16px; height: 16px; color: var(--text-dim); }
+  .notif-dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 7px; height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  /* ── CONTENT ── */
+  .content { padding: 32px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* ── GREETING BANNER ── */
+  .greeting-banner {
+    background: linear-gradient(135deg, rgba(59,91,255,0.2) 0%, rgba(124,58,237,0.12) 100%);
+    border: 1px solid rgba(59,91,255,0.25);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .greeting-banner::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(59,91,255,0.18), transparent 70%);
+    border-radius: 50%;
+  }
+  .greeting-text h2 { font-family: 'Syne', sans-serif; font-size: 22px; margin-bottom: 4px; }
+  .greeting-text p { font-size: 13.5px; color: var(--text-dim); }
+  .greeting-cta {
+    margin-left: auto;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .18s, box-shadow .18s;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  .greeting-cta:hover {
+    background: var(--blue-light);
+    box-shadow: 0 6px 24px var(--blue-glow);
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+  .stat-card:hover { border-color: rgba(59,91,255,0.3); transform: translateY(-2px); }
+
+  .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .stat-label svg { width: 14px; height: 14px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; }
+  .stat-change { font-size: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .stat-change.up { color: var(--green); }
+  .stat-change.down { color: var(--red); }
+  .stat-change.neutral { color: var(--text-muted); }
+
+  /* ── TWO COLUMN ── */
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .card-action {
+    font-size: 12.5px; color: var(--blue-light);
+    cursor: pointer; text-decoration: none;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .card-action:hover { color: #fff; }
+  .card-body { padding: 20px 24px; }
+
+  /* ── TRANSACTIONS ── */
+  .tx-list { display: flex; flex-direction: column; gap: 0; }
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .tx-icon.deposit { background: rgba(34,211,160,0.12); color: var(--green); }
+  .tx-icon.withdraw { background: rgba(244,63,94,0.12); color: var(--red); }
+  .tx-icon.pending { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .tx-icon svg { width: 16px; height: 16px; }
+  .tx-info { flex: 1; }
+  .tx-name { font-size: 13.5px; font-weight: 500; }
+  .tx-date { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .tx-amount { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
+  .tx-amount.deposit { color: var(--green); }
+  .tx-amount.withdraw { color: var(--red); }
+  .tx-amount.pending { color: var(--amber); }
+
+  /* ── QUICK ACTIONS ── */
+  .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .action-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .18s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .action-btn:hover {
+    border-color: rgba(59,91,255,0.35);
+    background: rgba(59,91,255,0.07);
+    transform: translateY(-2px);
+  }
+  .action-btn-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: grid; place-items: center;
+    background: rgba(59,91,255,0.12);
+    color: var(--blue-light);
+  }
+  .action-btn-icon svg { width: 15px; height: 15px; }
+  .action-btn-label { font-size: 13px; font-weight: 500; }
+  .action-btn-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* ── DOCS SECTION ── */
+  .doc-list { display: flex; flex-direction: column; gap: 10px; }
+  .doc-item {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    transition: border-color .18s;
+    cursor: pointer;
+  }
+  .doc-item:hover { border-color: rgba(59,91,255,0.3); }
+  .doc-icon { color: var(--blue-light); flex-shrink: 0; }
+  .doc-icon svg { width: 18px; height: 18px; }
+  .doc-name { font-size: 13.5px; font-weight: 500; flex: 1; }
+  .doc-size { font-size: 11.5px; color: var(--text-muted); }
+  .doc-status {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .doc-status.verified { background: rgba(34,211,160,0.1); color: var(--green); }
+  .doc-status.pending { background: rgba(245,158,11,0.1); color: var(--amber); }
+  .doc-status.missing { background: rgba(244,63,94,0.1); color: var(--red); }
+
+  .upload-zone {
+    border: 1.5px dashed rgba(59,91,255,0.35);
+    border-radius: 11px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    margin-top: 14px;
+  }
+  .upload-zone:hover {
+    background: rgba(59,91,255,0.05);
+    border-color: rgba(59,91,255,0.6);
+  }
+  .upload-zone svg { color: var(--blue-light); margin-bottom: 8px; }
+  .upload-zone p { font-size: 13px; color: var(--text-dim); }
+  .upload-zone span { color: var(--blue-light); font-weight: 500; }
+
+  /* ── CHART (CSS) ── */
+  .mini-chart { display: flex; align-items: flex-end; gap: 6px; height: 60px; padding: 10px 0 0; }
+  .bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    background: rgba(59,91,255,0.25);
+    transition: background .2s;
+    position: relative;
+    cursor: pointer;
+  }
+  .bar:hover { background: rgba(59,91,255,0.55); }
+  .bar.active { background: var(--blue); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .progress-item { display: flex; flex-direction: column; gap: 6px; }
+  .progress-row { display: flex; justify-content: space-between; font-size: 12.5px; }
+  .progress-bar { height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; }
+  .fill-blue { background: var(--blue); }
+  .fill-green { background: var(--green); }
+  .fill-amber { background: var(--amber); }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface2); border-radius: 10px; }
+  .tab {
+    flex: 1; padding: 8px 12px; border-radius: 8px;
+    font-size: 12.5px; text-align: center;
+    cursor: pointer; transition: background .18s, color .18s;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .tab.active { background: var(--surface); color: var(--text); }
+
+  /* ── ALERT ── */
+  .alert {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+  .alert svg { color: var(--amber); flex-shrink: 0; }
+  .alert a { color: var(--blue-light); cursor: pointer; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stat-card, .greeting-banner, .card, .two-col { animation: fadeUp .5s ease both; }
+  .stat-card:nth-child(1) { animation-delay: .05s; }
+  .stat-card:nth-child(2) { animation-delay: .10s; }
+  .stat-card:nth-child(3) { animation-delay: .15s; }
+  .stat-card:nth-child(4) { animation-delay: .20s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; }
+    .content { padding: 20px 16px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">N</div>
+      <div>
+        <div class="logo-text">Nubas</div>
+        <div class="logo-sub">Client Area</div>
+      </div>
+    </div>
+
+    <nav>
+      <span class="nav-section">Principal</span>
+
+      <div class="nav-item active" onclick="switchSection('dashboard', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Dashboard
+      </div>
+
+      <div class="nav-item" onclick="switchSection('account', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Mi Cuenta
+      </div>
+
+      <div class="nav-item" onclick="switchSection('wallet', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/><path d="M2 10h20"/></svg>
+        Saldo & Pagos
+        <span class="badge">2</span>
+      </div>
+
+      <div class="nav-item" onclick="switchSection('docs', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </div>
+
+      <div class="nav-item" onclick="switchSection('services', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Mis Servicios
+      </div>
+
+      <span class="nav-section">Soporte</span>
+
+      <div class="nav-item" onclick="switchSection('tickets', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Soporte
+        <span class="badge">1</span>
+      </div>
+
+      <div class="nav-item" onclick="switchSection('settings', this)">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="avatar">CM</div>
+      <div>
+        <div class="user-name">Carlos M.</div>
+        <div class="user-role">Cliente Premium</div>
+      </div>
+      <div class="user-chevron">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <span class="page-title" id="pageTitle">Dashboard</span>
+      <div class="topbar-right">
+        <div class="icon-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="icon-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="avatar" style="width:34px;height:34px;font-size:13px;cursor:pointer">CM</div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD SECTION -->
+    <div class="content" id="sec-dashboard">
+
+      <div class="alert">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Tu verificación de identidad está pendiente. <a>Completar ahora →</a>
+      </div>
+
+      <div class="greeting-banner">
+        <div>
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--blue-light);margin-bottom:8px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="greeting-text">
+          <h2>¡Bienvenido de nuevo, Carlos! 👋</h2>
+          <p>Tu cuenta está activa. Tienes 2 notificaciones pendientes y 1 documento por subir.</p>
+        </div>
+        <button class="greeting-cta">Hacer un Depósito</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+            Saldo Disponible
+          </div>
+          <div class="stat-value">$12,840</div>
+          <div class="stat-change up">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+            +8.2% este mes
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Inversión Total
+          </div>
+          <div class="stat-value">$48,200</div>
+          <div class="stat-change up">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+            +12.4% acumulado
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Rendimiento
+          </div>
+          <div class="stat-value">+$5,960</div>
+          <div class="stat-change up">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+            Ganancias totales
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Documentos
+          </div>
+          <div class="stat-value">3 / 5</div>
+          <div class="stat-change neutral">2 pendientes de subir</div>
+        </div>
+      </div>
+
+      <!-- TWO COLUMN -->
+      <div class="two-col">
+
+        <!-- TRANSACTIONS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Movimientos Recientes</span>
+            <a class="card-action">Ver todos →</a>
+          </div>
+          <div class="card-body">
+            <!-- Tabs -->
+            <div class="tabs" style="margin-bottom:18px">
+              <div class="tab active">Todos</div>
+              <div class="tab">Depósitos</div>
+              <div class="tab">Retiros</div>
+            </div>
+            <div class="tx-list">
+              <div class="tx-item">
+                <div class="tx-icon deposit"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+                <div class="tx-info">
+                  <div class="tx-name">Depósito bancario</div>
+                  <div class="tx-date">Hoy, 10:32 AM</div>
+                </div>
+                <div class="tx-amount deposit">+$3,000</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-icon withdraw"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="tx-info">
+                  <div class="tx-name">Retiro a cuenta bancaria</div>
+                  <div class="tx-date">Ayer, 4:15 PM</div>
+                </div>
+                <div class="tx-amount withdraw">-$1,200</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-icon deposit"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+                <div class="tx-info">
+                  <div class="tx-name">Depósito SPEI</div>
+                  <div class="tx-date">Mar 17, 9:00 AM</div>
+                </div>
+                <div class="tx-amount deposit">+$5,000</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-icon pending"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div class="tx-info">
+                  <div class="tx-name">Depósito en proceso</div>
+                  <div class="tx-date">Mar 16, 2:00 PM</div>
+                </div>
+                <div class="tx-amount pending">~$2,500</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-icon withdraw"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="tx-info">
+                  <div class="tx-name">Retiro parcial</div>
+                  <div class="tx-date">Mar 14, 11:30 AM</div>
+                </div>
+                <div class="tx-amount withdraw">-$800</div>
+              </div>
+            </div>
+
+            <!-- Mini chart -->
+            <div style="margin-top:20px">
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Depósitos últimos 7 días</div>
+              <div class="mini-chart">
+                <div class="bar" style="height:30%"></div>
+                <div class="bar" style="height:55%"></div>
+                <div class="bar" style="height:40%"></div>
+                <div class="bar" style="height:70%"></div>
+                <div class="bar" style="height:85%"></div>
+                <div class="bar active" style="height:100%"></div>
+                <div class="bar" style="height:60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Quick actions -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Acciones Rápidas</span>
+            </div>
+            <div class="card-body">
+              <div class="actions-grid">
+                <div class="action-btn">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                  <div class="action-btn-label">Depositar</div>
+                  <div class="action-btn-sub">SPEI / Tarjeta</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  <div class="action-btn-label">Retirar</div>
+                  <div class="action-btn-sub">Cuenta bancaria</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+                  <div class="action-btn-label">Subir Doc</div>
+                  <div class="action-btn-sub">KYC / Contrato</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                  <div class="action-btn-label">Soporte</div>
+                  <div class="action-btn-sub">Abrir ticket</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account progress -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Perfil de Cuenta</span>
+              <a class="card-action">Completar →</a>
+            </div>
+            <div class="card-body">
+              <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Completitud: <span style="color:var(--blue-light);font-weight:600">68%</span></div>
+              <div style="height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:18px">
+                <div style="width:68%;height:100%;background:var(--blue);border-radius:99px;"></div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-item">
+                  <div class="progress-row"><span>Datos personales</span><span style="color:var(--green)">✓ Completo</span></div>
+                  <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-row"><span>Verificación KYC</span><span style="color:var(--amber)">En revisión</span></div>
+                  <div class="progress-bar"><div class="progress-fill fill-amber" style="width:60%"></div></div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-row"><span>Contrato firmado</span><span style="color:var(--green)">✓ Completo</span></div>
+                  <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+                </div>
+                <div class="progress-item">
+                  <div class="progress-row"><span>Documentos</span><span style="color:var(--red)">Pendiente</span></div>
+                  <div class="progress-bar"><div class="progress-fill fill-blue" style="width:40%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /sec-dashboard -->
+
+    <!-- DOCS SECTION -->
+    <div class="content" id="sec-docs" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Mis Documentos</span>
+          <a class="card-action">+ Subir nuevo</a>
+        </div>
+        <div class="card-body">
+          <div class="doc-list">
+            <div class="doc-item">
+              <div class="doc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="doc-name">Identificación oficial (INE)</div>
+              <div class="doc-size">1.2 MB · PDF</div>
+              <span class="doc-status verified">Verificado</span>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="doc-name">Comprobante de domicilio</div>
+              <div class="doc-size">890 KB · PDF</div>
+              <span class="doc-status pending">En revisión</span>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="doc-name">Contrato de servicio firmado</div>
+              <div class="doc-size">2.1 MB · PDF</div>
+              <span class="doc-status verified">Verificado</span>
+            </div>
+            <div class="doc-item" style="border-color:rgba(244,63,94,0.2)">
+              <div class="doc-icon" style="color:var(--red)"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="doc-name">Estado de cuenta bancario</div>
+              <div class="doc-size">Sin subir</div>
+              <span class="doc-status missing">Faltante</span>
+            </div>
+            <div class="doc-item" style="border-color:rgba(244,63,94,0.2)">
+              <div class="doc-icon" style="color:var(--red)"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <div class="doc-name">RFC / Constancia fiscal</div>
+              <div class="doc-size">Sin subir</div>
+              <span class="doc-status missing">Faltante</span>
+            </div>
+          </div>
+
+          <div class="upload-zone" onclick="this.style.borderColor='var(--blue)'">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            <p>Arrastra tu archivo aquí o <span>selecciona desde tu dispositivo</span></p>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:4px">PDF, JPG, PNG — máx. 10 MB</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sec-docs -->
+
+    <!-- WALLET SECTION -->
+    <div class="content" id="sec-wallet" style="display:none">
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card">
+          <div class="stat-label">Saldo disponible</div>
+          <div class="stat-value">$12,840</div>
+          <div class="stat-change up">Listo para retirar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">En proceso</div>
+          <div class="stat-value">$2,500</div>
+          <div class="stat-change neutral">1–2 días hábiles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total depositado</div>
+          <div class="stat-value">$62,000</div>
+          <div class="stat-change up">Histórico</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Realizar Depósito</span>
+          </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+            <div>
+              <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">Método de pago</label>
+              <div class="actions-grid">
+                <div class="action-btn" style="border-color:rgba(59,91,255,0.5);background:rgba(59,91,255,0.08)">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+                  <div class="action-btn-label">SPEI</div>
+                  <div class="action-btn-sub">Inmediato</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg></div>
+                  <div class="action-btn-label">Tarjeta</div>
+                  <div class="action-btn-sub">VISA / MC</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">Monto</label>
+              <div style="position:relative">
+                <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px">$</span>
+                <input type="number" placeholder="0.00" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px 12px 28px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+            </div>
+            <button style="background:var(--blue);color:#fff;border:none;padding:13px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:background .18s" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background='var(--blue)'">Confirmar Depósito</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Datos SPEI</span>
+          </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+            <div style="background:var(--surface2);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:13px">
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Banco</span><span style="font-weight:500">STP / BBVA</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">CLABE</span><span style="font-family:'Syne',sans-serif;letter-spacing:.05em">012 180 0041 2345 6789 0</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Beneficiario</span><span>Nubas S.A. de C.V.</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Concepto</span><span style="color:var(--blue-light)">NUB-CM-00142</span></div>
+            </div>
+            <div class="alert" style="font-size:12px">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Usa el concepto exacto para identificar tu transferencia automáticamente.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sec-wallet -->
+
+    <!-- ACCOUNT SECTION -->
+    <div class="content" id="sec-account" style="display:none">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Datos Personales</span>
+            <a class="card-action">Editar</a>
+          </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div>
+                <label style="font-size:11.5px;color:var(--text-muted);display:block;margin-bottom:5px">Nombre</label>
+                <input value="Carlos" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+              <div>
+                <label style="font-size:11.5px;color:var(--text-muted);display:block;margin-bottom:5px">Apellidos</label>
+                <input value="Martínez" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11.5px;color:var(--text-muted);display:block;margin-bottom:5px">Correo electrónico</label>
+              <input value="carlos.martinez@email.com" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:11.5px;color:var(--text-muted);display:block;margin-bottom:5px">Teléfono</label>
+              <input value="+52 55 1234 5678" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:11.5px;color:var(--text-muted);display:block;margin-bottom:5px">RFC</label>
+              <input value="MACC850312HDF" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <button style="background:var(--blue);color:#fff;border:none;padding:12px;border-radius:9px;font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer">Guardar cambios</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Estado de Cuenta</span></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+                <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:8px"><span style="color:var(--text-muted)">Plan</span><span style="color:var(--blue-light);font-weight:600">Premium</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:8px"><span style="color:var(--text-muted)">Cliente desde</span><span>Enero 2025</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:8px"><span style="color:var(--text-muted)">ID de cliente</span><span style="font-family:'Syne',sans-serif">NUB-CM-00142</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface2);border-radius:8px"><span style="color:var(--text-muted)">Estatus KYC</span><span style="color:var(--amber)">● En revisión</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Seguridad</span></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <div class="action-btn">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;font-weight:500">Cambiar contraseña</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+              <div class="action-btn">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;font-weight:500">Autenticación 2FA</span>
+                  <span style="font-size:11px;color:var(--red)">Desactivado</span>
+                </div>
+              </div>
+              <div class="action-btn">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:13px;font-weight:500">Sesiones activas</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sec-account -->
+
+    <!-- Other placeholder sections -->
+    <div class="content" id="sec-services" style="display:none">
+      <div class="card"><div class="card-body" style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="margin:0 auto 16px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div style="font-size:15px;font-weight:500;color:var(--text-dim)">Mis Servicios</div>
+        <div style="font-size:13px;margin-top:6px">Próximamente: detalle de productos contratados</div>
+      </div></div>
+    </div>
+    <div class="content" id="sec-tickets" style="display:none">
+      <div class="card"><div class="card-body" style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="margin:0 auto 16px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <div style="font-size:15px;font-weight:500;color:var(--text-dim)">Soporte</div>
+        <div style="font-size:13px;margin-top:6px">Tienes 1 ticket abierto</div>
+      </div></div>
+    </div>
+    <div class="content" id="sec-settings" style="display:none">
+      <div class="card"><div class="card-body" style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="margin:0 auto 16px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <div style="font-size:15px;font-weight:500;color:var(--text-dim)">Configuración</div>
+        <div style="font-size:13px;margin-top:6px">Notificaciones, idioma, preferencias</div>
+      </div></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const titles = {
+    dashboard: 'Dashboard',
+    account: 'Mi Cuenta',
+    wallet: 'Saldo & Pagos',
+    docs: 'Documentos',
+    services: 'Mis Servicios',
+    tickets: 'Soporte',
+    settings: 'Configuración'
+  };
+
+  function switchSection(id, el) {
+    // Hide all
+    document.querySelectorAll('[id^="sec-"]').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    // Show
+    document.getElementById('sec-' + id).style.display = 'flex';
+    el.classList.add('active');
+    document.getElementById('pageTitle').textContent = titles[id];
+    // Re-trigger animations
+    document.querySelectorAll('#sec-' + id + ' .stat-card, #sec-' + id + ' .card').forEach((el, i) => {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = `fadeUp .4s ease ${i * 0.06}s both`;
+    });
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tabs').forEach(tabGroup => {
+    tabGroup.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
