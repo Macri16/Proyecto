@@ -1,16 +1,13 @@
-// Local/dev placeholder.
-// IMPORTANT: For real deployment, replace values with your real Supabase + backend URLs.
-// If you commit this file, it will expose your anon key (which is OK) but DO NOT put service role keys here.
+// IMPORTANT: Solo la clave ANON (JWT eyJ...) va aquí. NUNCA pegues sb_secret_ ni service_role.
+// Si alguna vez pegaste la secret en el repo o en GitHub, rótala en Supabase: Settings → API Keys.
 
 window.__APP_CONFIG__ = {
-  // Supabase → Settings → Data API (API URL)
+  // Supabase → Settings → Data API → API URL
   SUPABASE_URL: "https://msgreflsxyroqecdtuqz.supabase.co",
-  // Supabase → Settings → API Keys → pestaña «Legacy anon, service_role» → anon (JWT eyJ...)
-  // Si solo ves Publishable/Secret nuevas, abre la pestaña legacy y copia «anon public».
+  // Supabase → Settings → API Keys → pestaña «Legacy anon, service_role» → anon public (JWT eyJ...)
   SUPABASE_ANON_KEY: "PEGAR_AQUI_TU_ANON_JWT",
-  // Misma URL donde ya te funciona GET /api/me (401 JSON)
+  // Base del backend (sin rutas: sin /login.html)
   API_BASE_URL: "https://proyecto-peach-six.vercel.app",
   STRIPE_MIN_AMOUNT_CENTS: 500,
   STRIPE_CURRENCY: "usd"
 };
-
