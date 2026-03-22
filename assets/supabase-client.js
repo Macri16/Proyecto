@@ -8,6 +8,12 @@ function getAppConfig() {
       "Missing config. Create assets/config.js from assets/config.example.js and set SUPABASE_URL + SUPABASE_ANON_KEY."
     );
   }
+  const key = String(cfg.SUPABASE_ANON_KEY);
+  if (/PEGAR_AQUI|YOUR_SUPABASE|example\.com/i.test(key) || key.length < 20) {
+    throw new Error(
+      "SUPABASE_ANON_KEY no está configurada. En Supabase: Settings → API Keys. Usa la clave anon (JWT que empieza por eyJ…) pestaña «Legacy anon, service_role», o la Publishable si tu proyecto ya la soporta."
+    );
+  }
   return cfg;
 }
 

@@ -60,7 +60,15 @@
   <script src="./assets/config.js"></script>
   <script src="./assets/supabase-client.js"></script>
   <script src="./assets/app.js"></script>
-  <script>window.__initLoginPage();</script>
+  <script>
+    window.__initLoginPage().catch(function (e) {
+      var el = document.getElementById("error");
+      if (el) {
+        el.textContent = e && e.message ? e.message : String(e);
+        el.style.display = "block";
+      }
+    });
+  </script>
 </body>
 </html>
 

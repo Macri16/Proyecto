@@ -15,7 +15,14 @@ function setHtml(sel, value) {
 function show(sel, on = true) {
   const el = $(sel);
   if (!el) return;
-  el.style.display = on ? "" : "none";
+  if (!on) {
+    el.style.display = "none";
+    return;
+  }
+  // Forzar visible: las clases como `.msg { display: none }` ganan si usamos display "".
+  const tag = el.tagName;
+  el.style.display =
+    tag === "A" || tag === "SPAN" ? "inline" : tag === "BUTTON" ? "inline-block" : "block";
 }
 
 function getAccessTokenFromSession(session) {
@@ -78,11 +85,12 @@ async function requireAuth({ role } = {}) {
 }
 
 async function initLoginPage() {
-  const supabase = window.__createSupabaseClient();
-
-  const { data } = await supabase.auth.getSession();
-  if (data?.session) {
-    location.href = "./client.html";
+  let supabase;
+  try {
+    supabase = window.__createSupabaseClient();
+  } catch (e) {
+    setText("#error", e?.message || String(e));
+    show("#error", true);
     return;
   }
 
@@ -115,7 +123,6 @@ async function initLoginPage() {
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
-      // If email confirmations enabled, user may need to confirm.
       setHtml(
         "#ok",
         "Cuenta creada. Revisa tu email si te pide confirmación. Luego inicia sesión."
@@ -129,7 +136,8 @@ async function initLoginPage() {
     }
   }
 
-  $("#btnSignIn")?.addEventListener("click", async (ev) => {
+  // Enlazar ANTES de cualquier await: si getSession falla, los botones seguían sin listener.
+  form?.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     show("#error", false);
     show("#ok", false);
@@ -142,6 +150,16 @@ async function initLoginPage() {
     show("#ok", false);
     await signUp(emailEl?.value?.trim(), passEl?.value || "");
   });
+
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      location.href = "./client.html";
+    }
+  } catch (e) {
+    setText("#error", e?.message || String(e));
+    show("#error", true);
+  }
 }
 
 async function initClientPage() {
