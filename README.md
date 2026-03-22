@@ -1,8 +1,10 @@
 # marketcorp.org — Landing + Área de clientes
 
 Este repo contiene:
-- **Frontend estático** (GitHub Pages): `index.html`, `login.html`, `client.html`, `admin.html`
-- **Backend serverless** (Vercel recomendado): `backend/api/*` (Stripe + Supabase)
+- **Frontend estático**: `index.html`, `login.html`, `client.html`, `admin.html`
+- **API serverless en la raíz** (Vercel): `api/*` + `lib/api-utils.js` + `package.json` en la raíz del repo  
+  Si despliegas **todo el repo** en Vercel (sin “Root Directory” en `backend/`), usa esta carpeta `api/` — así `/api/me` funciona en la misma URL que la landing.
+- **Alternativa**: carpeta `backend/` (útil si quieres un proyecto Vercel separado con **Root Directory = `backend`**)
 
 ## 1) Configurar Supabase
 
@@ -24,19 +26,24 @@ Este repo contiene:
 Eventos necesarios:
 - `checkout.session.completed`
 
-## 3) Backend (Vercel)
+## 3) Backend / API (Vercel)
 
-### Deploy
+### Opción A — Un solo proyecto (recomendado si ya tienes la landing en Vercel)
 
-1. Sube la carpeta `backend/` a un repo (puede ser repo separado).
-2. En Vercel, “Import Project” apuntando a `backend/`.
-3. Variables de entorno (ver `backend/.env.example`):
+1. Conecta el **repo completo** a Vercel (raíz del proyecto, **sin** cambiar “Root Directory” a `backend`).
+2. Vercel detectará `package.json` y la carpeta `api/`.
+3. Variables de entorno (mismas que en `backend/.env.example`):
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_WEBHOOK_SECRET`
-   - `FRONTEND_BASE_URL` (tu GitHub Pages)
+   - `FRONTEND_BASE_URL` = la URL pública de **este** sitio (ej. `https://tu-proyecto.vercel.app`, sin barra final)
+   - `STRIPE_SECRET_KEY` y `STRIPE_WEBHOOK_SECRET` (cuando actives pagos)
    - `ALLOWED_ORIGIN` (opcional)
+4. Tras el deploy, prueba: `https://TU_DOMINIO.vercel.app/api/me` → debe responder JSON (401 sin token), **no** 404.
+
+### Opción B — Solo backend
+
+1. En Vercel, importa el repo y pon **Root Directory = `backend`**.
+2. Variables de entorno: ver `backend/.env.example`.
 
 ### Endpoints
 - `GET /api/me`
