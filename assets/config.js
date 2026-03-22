@@ -4,8 +4,8 @@
 
 window.__APP_CONFIG__ = {
   SUPABASE_URL: "https://YOUR_PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY",
-  API_BASE_URL: "https://YOUR_BACKEND.example.com",
+  SUPABASE_ANON_KEY: "sb_secret_8DBZ6mFBAeac2SNZxTvvSQ_iioxoGSP",
+  API_BASE_URL: "https://proyecto-peach-six.vercel.app/login.htm",
   STRIPE_MIN_AMOUNT_CENTS: 500,
   STRIPE_CURRENCY: "usd"
 };
